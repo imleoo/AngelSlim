@@ -427,7 +427,11 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Compression配置</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">INT4-AWQ量化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">INT4-AWQ量化</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#awq">AWQ算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">快速转换AWQ格式</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -604,9 +608,25 @@ torchrun<span class="w"> </span><span class="se">\</span>
 <section id="id15">
 <h3>INT4-AWQ量化<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
 <p>您可以通过下面代码启动INT4-AWQ量化流程:</p>
+<section id="awq">
+<h4>AWQ算法<a class="headerlink" href="#awq" title="Link to this heading">#</a></h4>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/run.py<span class="w"> </span>--config<span class="w"> </span>configs/deepseek_r1/int4_awq/deepseek_r1_int4_awq.yaml
 </pre></div>
 </div>
+</section>
+<section id="id16">
+<h4>快速转换AWQ格式<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/convert_int4_awq_offline.py<span class="w"> </span><span class="se">\</span>
+--bit<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+--group-size<span class="w"> </span>xx<span class="w"> </span><span class="se">\ </span><span class="c1"># 128或者64</span>
+--zero-point<span class="w"> </span>xx<span class="w"> </span><span class="se">\ </span><span class="c1"># 设置为True时在vllm中对应AWQ，设置为False对应GPTQ</span>
+--num-workers<span class="w"> </span>xx<span class="w"> </span><span class="se">\ </span><span class="c1"># 线程数</span>
+--input_path<span class="w"> </span>权重路径<span class="w"> </span><span class="se">\</span>
+--output_path<span class="w"> </span>保存路径<span class="w"> </span><span class="se">\</span>
+--exclude-patterns<span class="w"> </span>None<span class="w"> </span><span class="se">\ </span><span class="c1"># 设置不量化模块，默认为None</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 </section>
@@ -689,7 +709,11 @@ torchrun<span class="w"> </span><span class="se">\</span>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Compression配置</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">INT4-AWQ量化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">INT4-AWQ量化</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#awq">AWQ算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">快速转换AWQ格式</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
