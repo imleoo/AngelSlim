@@ -396,7 +396,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ditfp8">快速开始：DiT模型FP8量化</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">方式1：加载已量化权重+缩放因子</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">方式2：模型动态量化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">方式2：模型动态量化 &amp; 仅权重量化</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">方式3：导出量化权重</a></li>
 </ul>
 </li>
@@ -453,7 +453,7 @@ document.write(`
 </div>
 </section>
 <section id="id2">
-<h3>方式2：模型动态量化<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>方式2：模型动态量化 &amp; 仅权重量化<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">diffusers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FluxPipeline</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">angelslim.compressor.diffusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicDiTQuantizer</span>
@@ -489,6 +489,7 @@ document.write(`
 <h2>支持的FP8量化类型<a class="headerlink" href="#fp8" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>fp8-per-tensor</strong>：全局per-tensor量化（推荐）</p></li>
+<li><p><strong>fp8-per-tensor-weight-only</strong>：权重量化（权重：FP8，激活：BF16/FP16）</p></li>
 <li><p><strong>fp8-per-block</strong>：per-block量化，支持NVIDIA Hopper (SM90+) DeepGEMM</p></li>
 <li><p><strong>fp8-per-token</strong>：per-token量化，粒度更细</p></li>
 </ul>
@@ -529,7 +530,7 @@ document.write(`
 <section id="dynamicditquantizer">
 <h3>DynamicDiTQuantizer<a class="headerlink" href="#dynamicditquantizer" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">quant_type</span></code>：量化类型（”fp8-per-tensor”/”fp8-per-block”/”fp8-per-token”）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quant_type</span></code>：量化类型（”fp8-per-tensor”/”fp8-per-tensor-weight-only”/”fp8-per-block”/”fp8-per-token”）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">layer_filter</span></code>：自定义筛选函数（可选）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">include_patterns</span></code>/<code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code>：包含/排除哪些层（字符串或正则，支持混用）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">native_fp8_support</span></code>：是否使用原生FP8支持（如支持自动检测）</p></li>
@@ -574,7 +575,7 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ditfp8">快速开始：DiT模型FP8量化</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">方式1：加载已量化权重+缩放因子</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">方式2：模型动态量化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">方式2：模型动态量化 &amp; 仅权重量化</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">方式3：导出量化权重</a></li>
 </ul>
 </li>
