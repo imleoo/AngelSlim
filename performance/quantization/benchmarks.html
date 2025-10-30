@@ -401,6 +401,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">其他模型</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#int4-gptaq">INT4-GPTAQ</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvfp4">NVFP4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3vl">Qwen3VL</a></li>
 </ul>
             </nav>
         </div>
@@ -1515,6 +1516,51 @@ document.write(`
 </table>
 </div>
 </section>
+<section id="qwen3vl">
+<h2>Qwen3VL<a class="headerlink" href="#qwen3vl" title="Link to this heading">#</a></h2>
+<p>Qwen3VL系列模型的<code class="docutils literal notranslate"><span class="pre">BF16</span></code>、<code class="docutils literal notranslate"><span class="pre">FP8-Static</span></code>、<code class="docutils literal notranslate"><span class="pre">FP8-Dynamic</span></code>在<code class="docutils literal notranslate"><span class="pre">MMMU_VAL</span></code>、<code class="docutils literal notranslate"><span class="pre">DocVQA_VAL</span></code>、<code class="docutils literal notranslate"><span class="pre">ChartQA_TEST</span></code>上的评测结果如下：</p>
+<div class="pst-scrollable-table-container"><table class="table table-center" id="table-qwen3vl-performance">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Quantization</p></th>
+<th class="head"><p>MMMU_VAL</p></th>
+<th class="head"><p>DocVQA_VAL</p></th>
+<th class="head"><p>ChartQA_TEST</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>Qwen3-VL-32B-Instruct</p></td>
+<td><p>BF16</p></td>
+<td><p>60.11</p></td>
+<td><p>96.08</p></td>
+<td><p>94.64</p></td>
+</tr>
+<tr class="row-odd"><td><p>FP8-Static</p></td>
+<td><p>61.22</p></td>
+<td><p>96.00</p></td>
+<td><p>94.64</p></td>
+</tr>
+<tr class="row-even"><td><p>FP8-Dynamic</p></td>
+<td><p>60.78</p></td>
+<td><p>96.19</p></td>
+<td><p>94.72</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>Qwen3-VL-30B-A3B-Instruct</p></td>
+<td><p>BF16</p></td>
+<td><p>50.44</p></td>
+<td><p>95.28</p></td>
+<td><p>95.36</p></td>
+</tr>
+<tr class="row-even"><td><p>FP8-Dynamic</p></td>
+<td><p>50.67</p></td>
+<td><p>95.25</p></td>
+<td><p>95.20</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>FP8-Dynamic采用Block-wise的量化，启动命令：python3 tools/fp8_quant_blockwise.py –block_size –input_path –output_path</p>
+</section>
 </section>
 
 
@@ -1571,6 +1617,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">其他模型</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#int4-gptaq">INT4-GPTAQ</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvfp4">NVFP4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3vl">Qwen3VL</a></li>
 </ul>
   </nav></div>
 
