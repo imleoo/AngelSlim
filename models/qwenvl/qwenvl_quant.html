@@ -515,10 +515,10 @@ python3<span class="w"> </span>tools/run.py<span class="w"> </span>-c<span class
 <p>vLLM框架支持QwenVL2.5的FP8（per-tensor）量化和INT4（AWQ、GPTQ）量化模型部署，建议使用<code class="docutils literal notranslate"><span class="pre">vllm==0.10.0</span></code>版本。</p>
 <p>部署步骤：</p>
 <ol class="arabic simple">
-<li><p>修改<code class="docutils literal notranslate"><span class="pre">AngelSlim/deploy/run_vllm.sh</span></code>中的<code class="docutils literal notranslate"><span class="pre">MODEL_PATH</span></code>字段，指定量化后的模型路径。</p></li>
+<li><p>修改<code class="docutils literal notranslate"><span class="pre">AngelSlim/scripts/deploy/run_vllm.sh</span></code>中的<code class="docutils literal notranslate"><span class="pre">MODEL_PATH</span></code>字段，指定量化后的模型路径。</p></li>
 <li><p>执行以下命令启动部署：</p></li>
 </ol>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>AngelSlim/deploy
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>AngelSlim/scripts/deploy
 sh<span class="w"> </span>run_vllm.sh<span class="w"> </span>
 </pre></div>
 </div>

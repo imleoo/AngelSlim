@@ -506,8 +506,8 @@ torchrun<span class="w"> </span><span class="se">\</span>
 <section id="id5">
 <h3>部署<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>vLLM支持DeepSeek的per-tensor量化，已验证vllm==0.8.5可部署。</p>
-<p>若使用单机8卡141GB H20，您可以修改<code class="docutils literal notranslate"><span class="pre">AngelSlim/deploy/run_vllm.sh</span></code>中的<code class="docutils literal notranslate"><span class="pre">MODEL_PATH</span></code>字段后通过以下命令使用：</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>AngelSlim/deploy
+<p>若使用单机8卡141GB H20，您可以修改<code class="docutils literal notranslate"><span class="pre">AngelSlim/scripts/deploy/run_vllm.sh</span></code>中的<code class="docutils literal notranslate"><span class="pre">MODEL_PATH</span></code>字段后通过以下命令使用：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>AngelSlim/scripts/deploy
 sh<span class="w"> </span>run_vllm.sh
 </pre></div>
 </div>
