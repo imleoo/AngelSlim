@@ -396,14 +396,15 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pip">pip安装（推荐）</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-vlm">默认安装（LLM &amp; VLM）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm">默认安装（LLM）</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">投机采样安装</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态安装</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffusion">Diffusion安装</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">全部安装</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">全部安装</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">编译安装</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">指定环境变量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">编译安装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">指定环境变量</a></li>
 </ul>
             </nav>
         </div>
@@ -420,13 +421,13 @@ document.write(`
 <p>AngelSlim支持如下安装方式：</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#pip%E5%AE%89%E8%A3%85%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="xref myst">pip安装（推荐）</span></a></p></li>
-<li><p><a class="reference internal" href="#id4">编译安装</a></p></li>
-<li><p><a class="reference internal" href="#id5">指定环境变量</a></p></li>
+<li><p><a class="reference internal" href="#id5">编译安装</a></p></li>
+<li><p><a class="reference internal" href="#id6">指定环境变量</a></p></li>
 </ul>
 <section id="pip">
 <h2>pip安装（推荐）<a class="headerlink" href="#pip" title="Link to this heading">#</a></h2>
-<section id="llm-vlm">
-<h3>默认安装（LLM &amp; VLM）<a class="headerlink" href="#llm-vlm" title="Link to this heading">#</a></h3>
+<section id="llm">
+<h3>默认安装（LLM）<a class="headerlink" href="#llm" title="Link to this heading">#</a></h3>
 <p>通过<code class="docutils literal notranslate"><span class="pre">pip</span></code>安装最新AngelSlim稳定发布版：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>angelslim
 </pre></div>
@@ -442,14 +443,20 @@ document.write(`
 </pre></div>
 </div>
 </section>
+<section id="id3">
+<h3>多模态安装<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>angelslim<span class="o">[</span>multimodal<span class="o">]</span>
+</pre></div>
+</div>
+</section>
 <section id="diffusion">
 <h3>Diffusion安装<a class="headerlink" href="#diffusion" title="Link to this heading">#</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>angelslim<span class="o">[</span>diffusion<span class="o">]</span>
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h3>全部安装<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>全部安装<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>angelslim<span class="o">[</span>all<span class="o">]</span>
 </pre></div>
 </div>
@@ -463,16 +470,16 @@ document.write(`
 </div>
 </section>
 </section>
-<section id="id4">
-<h2>编译安装<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h2>编译安装<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
 <p>如果对工具代码做过改动，或者想使用main分支最新功能，推荐使用编译安装方式：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>AngelSlim
 python<span class="w"> </span>setup.py<span class="w"> </span>install
 </pre></div>
 </div>
 </section>
-<section id="id5">
-<h2>指定环境变量<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<section id="id6">
+<h2>指定环境变量<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
 <p>如果对源码做了修改，更简易的方式是指定PYTHONPATH环境变量，例如：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>Your/Path/to/AngelSlim/:<span class="nv">$PYTHONPATH</span>
 </pre></div>
@@ -530,14 +537,15 @@ python<span class="w"> </span>setup.py<span class="w"> </span>install
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pip">pip安装（推荐）</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm-vlm">默认安装（LLM &amp; VLM）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#llm">默认安装（LLM）</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">投机采样安装</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态安装</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffusion">Diffusion安装</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">全部安装</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">全部安装</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">编译安装</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">指定环境变量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">编译安装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">指定环境变量</a></li>
 </ul>
   </nav></div>
 
