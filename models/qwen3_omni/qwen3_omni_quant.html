@@ -436,6 +436,7 @@ document.write(`
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>：模型名称，固定填写<code class="docutils literal notranslate"><span class="pre">Qwen_Omni</span></code>。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">model_path</span></code>：可填写hugging face模型卡片名称或者本地路径。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">use_audio_in_video</span></code>: 用于控制是否使用源视频的音频轨道</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">attn_implementation</span></code>: 模型中要使用的注意力实现，默认值为<code class="docutils literal notranslate"><span class="pre">default</span></code>，设为<code class="docutils literal notranslate"><span class="pre">flash_attention_2</span></code>可以降低GPU显存占用</p></li>
 </ul>
 </section>
 <section id="compression">
@@ -457,6 +458,13 @@ document.write(`
 </section>
 <section id="id2">
 <h3>启动量化流程<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>若在<code class="docutils literal notranslate"><span class="pre">model</span></code>配置中设置了<code class="docutils literal notranslate"><span class="pre">attn_implementation</span></code>为<code class="docutils literal notranslate"><span class="pre">flash_attention_2</span></code>，需要另外安装<code class="docutils literal notranslate"><span class="pre">FlashAttention</span> <span class="pre">2</span></code>：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>flash-attn<span class="w"> </span>--no-build-isolation
+
+<span class="c1"># ldd --version 如果 &lt; 2.32，可降到 2.7.4.post1 以下版本</span>
+pip<span class="w"> </span>install<span class="w"> </span>flash-attn<span class="o">==</span><span class="m">2</span>.7.4.post1<span class="w"> </span>--no-build-isolation
+</pre></div>
+</div>
 <p>通过以下命令启动FP8量化校准：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 动态FP8量化</span>
 python3<span class="w"> </span>tools/run.py<span class="w"> </span>-c<span class="w"> </span>configs/qwen3_omni/fp8_dynamic/qwen3_omni_fp8_dynamic.yaml
