@@ -399,12 +399,23 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">快速测试</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sglang">SGLang</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vllm">vLLM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 数据生成</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 为目标模型生成采样数据</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle3hidden-states">1.2 为Eagle3模型生成hidden states</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">训练及创新</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle3">2. 训练Eagle3模型</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1 在线训练</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.2 离线训练</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3. 基准测试</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.1 基本用法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2 参数说明</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.3 使用示例</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.4 性能报告</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -418,60 +429,207 @@ document.write(`
                   
   <section id="eagle">
 <h1>EAGLE<a class="headerlink" href="#eagle" title="Link to this heading">#</a></h1>
-<p>本项目将集成包括但不限于<a class="reference external" href="https://arxiv.org/pdf/2503.01840">Eagle</a>系列的投机采样算法。
-我们计划将对投机采样算法的代码以及部分开源大模型的Eagle3权重开源。
-作为第一批开源内容，我们将提供Qwen3系列的<a class="reference external" href="https://huggingface.co/collections/AngelSlim/qwen3-eagle-686787e3258f84fb09019f32">Eagle3权重</a>。
-后续，更多的代码和其他大模型的权重也将陆续开源，敬请关注。
-我们训练的Qwen3系列Eagle3模型的表现可以参见基准测试<a class="reference internal" href="../../performance/speculative_decoding/benchmarks.html"><span class="std std-doc">benchmarks</span></a>，
+<p><a class="reference external" href="https://arxiv.org/pdf/2503.01840">Eagle3</a>是目前最常用、加速效果最好的投机采样算法。
+本项目包括Eagle3的训练以及benchmark测试，并开源了Qwen3和Hunyuan系列的<a class="reference external" href="https://huggingface.co/collections/AngelSlim/eagle3">Eagle3权重</a>。</p>
+<p>我们训练的Qwen3系列Eagle3模型的表现可以参见基准测试<a class="reference internal" href="../../performance/speculative_decoding/benchmarks.html"><span class="std std-doc">benchmarks</span></a>，
 其中全部数据都是在单张H20上使用pytorch推理获得。</p>
 <section id="id1">
-<h2>快速测试<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<section id="sglang">
-<h3>SGLang<a class="headerlink" href="#sglang" title="Link to this heading">#</a></h3>
-<p>目前sglang已经支持Qwen3-8B/14B/30B-A3B模型的eagle3部署，你可以选择使用sglang作为推理后端快速验证Eagle3模型的加速效果。
-在已经安装sglang的环境中使用以下命令可以快速启动一个兼容Openai的服务，然后即可以通过本地端口进行请求了。</p>
-<ul>
-<li><p>启动兼容OpenAI格式的API服务</p>
-<p>以下指令将启动兼容OpenAI API格式的服务，默认在 http://0.0.0.0:8080 地址进行访问：</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>sglang.launch_server<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--model<span class="w"> </span><span class="si">${</span><span class="nv">TARGET_MODEL_PATH_OR_NAME</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative-algorithm<span class="w"> </span>EAGLE3<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative-draft-model-path<span class="w"> </span><span class="si">${</span><span class="nv">EAGLE3_MODEL_PATH</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative-num-steps<span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative-eagle-topk<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative-num-draft-tokens<span class="w"> </span><span class="m">32</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--mem-fraction<span class="w"> </span><span class="m">0</span>.9<span class="w">  </span><span class="se">\</span>
-<span class="w">    </span>--dtype<span class="w"> </span>bfloat16
-</pre></div>
-</div>
-<p>其中:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">TARGET_MODEL_PATH_OR_NAME</span></code>为本地路径或模型在huggingface上的名字;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">EAGLE3_MODEL_PATH</span></code>为Eagle3模型路径或在huggingface上的名字;</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="vllm">
-<h3>vLLM<a class="headerlink" href="#vllm" title="Link to this heading">#</a></h3>
-<p>目前vllm已经支持Hunyuan-1.8B-Instruct/4B-Instruct/7B-Instruct模型的eagle3部署，你可以选择使用vllm作为推理后端快速验证Eagle3模型的加速效果。
-在已经安装正确的<a class="reference external" href="https://github.com/vllm-project/vllm/pull/22080">vllm commit</a> 的环境中使用以下命令可以快速启动一个兼容Openai的服务，然后即可以通过本地端口进行请求了。</p>
-<ul>
-<li><p>启动兼容OpenAI格式的API服务</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>vllm.entrypoints.openai.api_server<span class="w"> </span>--tensor-parallel-size<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--speculative_config<span class="w"> </span><span class="s1">&#39;{&quot;model&quot;: &quot;AngelSlim/Hunyuan-1.8B-Instruct_eagle3&quot;, &quot;method&quot; : &quot;eagle3&quot;, &quot;draft_tensor_parallel_size&quot; : 1,  &quot;num_speculative_tokens&quot;: 2}&#39;</span><span class="w"> </span>--trust-remote-code<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--model<span class="w">  </span>tencent/Hunyuan-1.8B-Instruct<span class="w"> </span>
-</pre></div>
-</div>
-</li>
-</ul>
-<p>但是由于vllm最新版本Eagle3并不支持tree attention, 因此推理验证时为chain-base推理模式。</p>
-</section>
-</section>
+<h2>1. 数据生成<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>数据生成包括：1）为目标模型生成采样数据，2）为Eagle3模型离线生成目标模型的hidden states。</p>
 <section id="id2">
-<h2>训练及创新<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>Comming soon.</p>
+<h3>1.1 为目标模型生成采样数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>生成采样数据为可选项，当有足够数量以及足够质量的目标模型SFT数据时，此步可略过。当训练数据和目标模型不配套时，则需要为目标模型重新采样生成数据。</p>
+<p><strong>步骤1：启动vLLM server</strong></p>
+<p>首先需要启动vLLM server来提供模型推理服务：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>scripts/speculative/run_vllm_server.sh
+</pre></div>
+</div>
+<p><strong>server配置说明：</strong></p>
+<ul class="simple">
+<li><p>该脚本会启动目标基础模型的vLLM推理服务</p></li>
+<li><p>确保服务器成功启动后再进行下一步数据生成</p></li>
+<li><p>可以通过修改脚本中的参数来调整vLLM server配置（如vLLM启动参数、GPU数量等），来适应不同的目标模型</p></li>
+</ul>
+<p><strong>步骤2：生成采样数据</strong></p>
+<p>vLLM server启动后，使用 <code class="docutils literal notranslate"><span class="pre">scripts/speculative/generate_data_for_target_model.sh</span></code> 脚本生成训练数据：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>scripts/speculative/generate_data_for_target_model.sh
+</pre></div>
+</div>
+<p><strong>脚本功能说明：</strong></p>
+<ul class="simple">
+<li><p>通过vLLM server调用目标基础模型对输入数据进行采样</p></li>
+<li><p>生成 <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> 格式的训练数据集</p></li>
+<li><p>数据将用于后续Eagle模型的在线训练</p></li>
+</ul>
+<p><strong>脚本参数说明：</strong></p>
+<p>在使用前，需要在脚本中配置以下参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DATA_NAME_OR_PATH</span></code>: 输入数据集的HF名称或本地路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUTPUT_DIR</span></code>: 生成的数据集输出路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DATA_FORMAT</span></code>: 输入数据集的格式（sharegpt|ultrachat）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DATA_SHARD_SIZE</span></code>: 生成数据集的切分子集大小</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BASE_PORT</span></code>: vLLM server的端口号</p></li>
+</ul>
+<p><strong>注意事项：</strong></p>
+<ul class="simple">
+<li><p>确保vLLM服务器已成功启动并正常运行</p></li>
+<li><p>数据生成过程可能需要较长时间，取决于样本数量和模型规模</p></li>
+</ul>
+</section>
+<section id="eagle3hidden-states">
+<h3>1.2 为Eagle3模型生成hidden states<a class="headerlink" href="#eagle3hidden-states" title="Link to this heading">#</a></h3>
+<p>目前仅支持以HF为后端生成hidden states，调用脚本如下：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>scripts/speculative/generate_hidden_for_draft_model.sh
+</pre></div>
+</div>
+<p><strong>脚本参数说明：</strong></p>
+<p>在使用前，需要在脚本中配置以下参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DATASET_PATH</span></code>: 输入数据集的HF名称或本地路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODEL_NAME</span></code>: 目标模型的HF名称或本地路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TARGET_BACKEND</span></code>: 目标模型后端，目前仅支持HF</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODEL_MAX_LENGTH</span></code>: 生成数据的上下文长度</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHAT_TEMPLATE_TYPE</span></code>: 目标模型的目标类型，目前支持qwen3/hunyuan</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUTPUT_DIR</span></code>: 生成的数据集输出路径</p></li>
+</ul>
+</section>
+</section>
+<section id="eagle3">
+<h2>2. 训练Eagle3模型<a class="headerlink" href="#eagle3" title="Link to this heading">#</a></h2>
+<p>目前支持在线训练和离线训练两种模式：在线训练适合显存足够、目标模型不大、训练上下文长度不要求极长的场景，
+离线训练适合大尺寸目标模型、磁盘空间足够、长上下文训练场景。</p>
+<section id="id3">
+<h3>2.1 在线训练<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">scripts/speculative/train_eagle3_online.sh</span></code> 脚本进行Eagle3模型的在线训练：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>scripts/speculative/train_eagle3_online.sh
+</pre></div>
+</div>
+<p><strong>脚本参数说明：</strong></p>
+<p>在使用前，需要在脚本中配置以下参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TARGET_MODEL_NAME_OR_PATH</span></code>: 目标模型的HF名称或本地名称</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DRAFT_MODEL_CONFIG_PATH</span></code>: 草稿模型的config路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TRAIN_DATA_PATH</span></code>: 训练数据路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EVAL_DATA_PATH</span></code>: 验证数据路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUTPUT_DIR</span></code>: Eagle3模型输出路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODEL_MAX_LENGTH</span></code>: 训练数据的最大长度</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHAT_TEMPLATE_TYPE</span></code>: 目标模型的数据模板类型</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>2.2 离线训练<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>在离线训练前，必须要完成<code class="docutils literal notranslate"><span class="pre">1.2</span></code> 为Eagle3模型生成hidden states。
+使用 <code class="docutils literal notranslate"><span class="pre">scripts/speculative/train_eagle3_offline.sh</span></code> 脚本进行Eagle3模型的离线训练：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>scripts/speculative/train_eagle3_offline.sh
+</pre></div>
+</div>
+<p><strong>脚本参数说明：</strong></p>
+<p>在使用前，需要在脚本中配置以下参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TARGET_MODEL_NAME_OR_PATH</span></code>: 目标模型的HF名称或本地名称</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DRAFT_MODEL_CONFIG_PATH</span></code>: 草稿模型的config路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TRAIN_DATA_PATH</span></code>: 训练数据路径,.jsonl格式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TRAIN_HIDDEN_PATH</span></code>: 训练hidden states数据路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EVAL_HIDDEN_PATH</span></code>: 验证hidden states数据路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUTPUT_DIR</span></code>: Eagle3模型输出路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODEL_MAX_LENGTH</span></code>: 训练数据的最大长度</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHAT_TEMPLATE_TYPE</span></code>: 目标模型的数据模板类型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LM_HEAD_KEY</span></code>: 目标模型lm head的weight key名称，可以在model.safetensors.index.json中查看，默认为lm_head.weight时可不指定这个参数。当为model.embed_tokens.weight时，需要指定。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RUN_NAME</span></code>: 当<code class="docutils literal notranslate"><span class="pre">report_to</span></code>设为wand时，可以指定该参数设置wand中的run name。</p></li>
+</ul>
+</section>
+</section>
+<section id="id5">
+<h2>3. 基准测试<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>AngelSlim提供了完整的Eagle3基准测试工具，用于评估投机采样的性能提升。</p>
+<section id="id6">
+<h3>3.1 基本用法<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">tools/spec_benchmark.py</span></code> 脚本进行投机采样基准测试：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/spec_benchmark.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base-model-path<span class="w"> </span><span class="si">${</span><span class="nv">BASE_MODEL_PATH</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--eagle-model-path<span class="w"> </span><span class="si">${</span><span class="nv">EAGLE_MODEL_PATH</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--model-id<span class="w"> </span><span class="si">${</span><span class="nv">MODEL_ID</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mode<span class="w"> </span>both
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>3.2 参数说明<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p><strong>模型配置参数：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--base-model-path</span></code>: 基础模型路径（必需）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--eagle-model-path</span></code>: Eagle辅助模型路径（必需）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--model-id</span></code>: 模型标识符（必需）</p></li>
+</ul>
+<p><strong>基准测试配置：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--bench-name</span></code>: 基准数据集名称，默认为 <code class="docutils literal notranslate"><span class="pre">mt_bench</span></code>, 可选【<code class="docutils literal notranslate"><span class="pre">alpaca</span></code>,<code class="docutils literal notranslate"><span class="pre">gsm8k</span></code>,<code class="docutils literal notranslate"><span class="pre">humaneval</span></code>,<code class="docutils literal notranslate"><span class="pre">mt_bench</span></code>】</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mode</span></code>: 执行模式，可选 <code class="docutils literal notranslate"><span class="pre">eagle</span></code>（仅投机采样）、<code class="docutils literal notranslate"><span class="pre">baseline</span></code>（仅基线）、<code class="docutils literal notranslate"><span class="pre">both</span></code>（两者都执行），默认为 <code class="docutils literal notranslate"><span class="pre">both</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output-dir</span></code>: 结果输出目录</p></li>
+</ul>
+<p><strong>生成参数：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--temperature</span></code>: 采样温度，默认为 1.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max-new-token</span></code>: 最大生成token数，默认为 1024</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--total-token</span></code>: 草稿树中的总节点数，默认为 60</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--depth</span></code>: 树深度，默认为 5</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-k</span></code>: Top-k采样，默认为 10</p></li>
+</ul>
+<p><strong>硬件配置：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--num-gpus-per-model</span></code>: 每个模型使用的GPU数量，默认为 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--num-gpus-total</span></code>: 总GPU数量，默认为 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max-gpu-memory</span></code>: 每个GPU的最大内存限制</p></li>
+</ul>
+<p><strong>其他设置：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code>: 随机种子，默认为 42</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--question-begin</span></code>: 问题起始索引（用于调试）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--question-end</span></code>: 问题结束索引（用于调试）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-metrics</span></code>: 跳过自动指标计算</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>3.3 使用示例<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p><strong>完整基准测试（推荐）：</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/spec_benchmark.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base-model-path<span class="w"> </span>/path/to/base/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--eagle-model-path<span class="w"> </span>/path/to/eagle/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--model-id<span class="w"> </span>qwen3-8b<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mode<span class="w"> </span>both<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>./results<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--max-new-token<span class="w"> </span><span class="m">512</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--temperature<span class="w"> </span><span class="m">0</span>.0
+</pre></div>
+</div>
+<p><strong>仅运行投机采样：</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/spec_benchmark.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base-model-path<span class="w"> </span>/path/to/base/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--eagle-model-path<span class="w"> </span>/path/to/eagle/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--model-id<span class="w"> </span>qwen3-8b<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mode<span class="w"> </span>eagle
+</pre></div>
+</div>
+<p><strong>多GPU配置：</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>tools/spec_benchmark.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base-model-path<span class="w"> </span>/path/to/base/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--eagle-model-path<span class="w"> </span>/path/to/eagle/model<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--model-id<span class="w"> </span>qwen3-8b<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-gpus-per-model<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-gpus-total<span class="w"> </span><span class="m">8</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>3.4 性能报告<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>运行完成后，工具会自动生成性能报告，包括：</p>
+<ul class="simple">
+<li><p>投机采样与基线模型的性能对比</p></li>
+<li><p>加速比统计</p></li>
+<li><p>生成质量指标（如果启用）</p></li>
+</ul>
+<p>结果将保存在指定的输出目录中，便于后续分析和比较。</p>
+</section>
 </section>
 </section>
 
@@ -520,12 +678,23 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">快速测试</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sglang">SGLang</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vllm">vLLM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 数据生成</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 为目标模型生成采样数据</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle3hidden-states">1.2 为Eagle3模型生成hidden states</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">训练及创新</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle3">2. 训练Eagle3模型</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1 在线训练</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.2 离线训练</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3. 基准测试</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.1 基本用法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2 参数说明</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.3 使用示例</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.4 性能报告</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
